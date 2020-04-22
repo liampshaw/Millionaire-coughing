@@ -10,14 +10,14 @@ set.seed(12345)
 # We run 10,000 simulations
 results <- c(); for (i in 1:10000){ results <- c(results, sum(rpois(42, 0.063)))}
 
-png('coughs-random-simulation.png')
+png('figures/coughs-random-simulation.png')
 hist(results, col='black', xlab='Coughs during 42 x 5-second-periods after correct answers', ylab='Number of simulations', main='Simulations assuming random independent coughs', breaks=seq(0, 12, 0.25))
 dev.off()
 
 # Now assume that half of all coughs Whittock
 # So coughing rate now goes up by ~ factor of 5 (192 coughs total, we were assuming 19 previously)
 results <- c(); for (i in 1:10000){ results <- c(results, sum(rpois(42, 0.063*5)))}
-png('coughs-random-simulation-half-all-coughs.png')
+png('figures/coughs-random-simulation-half-all-coughs.png')
 hist(results, col='black', xlab='Coughs during 42 x 5-second-periods after correct answers', ylab='Number of simulations', main='Simulations assuming half of all coughs are Whittock', breaks=seq(0, 32, 1))
 abline(v=19, col='red', lw=2) # Add line for 19 coughs
 dev.off()
@@ -26,7 +26,7 @@ dev.off()
 # 2. Methodology
 # Read in cough dataset
 # (when coughs happened in the episode)
-coughs <- read.csv('millionaire-coughs.csv', 
+coughs <- read.csv('data/millionaire-coughs.csv', 
                    header=T,
                    stringsAsFactors = FALSE)
 coughs$time.minutes <- as.numeric(chron(times=coughs$video.time))*24*60
@@ -37,7 +37,7 @@ coughs$cougher <- ordered(coughs$cougher,
 
 # Read in answer dataset
 # (when an answer was said in the episode)
-questions.answers <- read.csv('millionaire-answers.csv',
+questions.answers <- read.csv('data/millionaire-answers.csv',
                               header=T,
                               stringsAsFactors = F)
 questions.answers$time.minutes <- as.numeric(chron(times=questions.answers$video.time))*24*60
@@ -85,7 +85,7 @@ plotQuestion <- function(question_number){
 
 # Make the plots for Questions 8 through 15
 for (i in seq(8, 15, 1)){
-  ggsave(file=paste0('Question-', i, '.png'), 
+  ggsave(file=paste0('figures/Question-', i, '.png'), 
          width=8, height=4,
          plotQuestion(i))
 }
@@ -132,7 +132,7 @@ histogram.plot <- ggplot(distances.answers, aes(time, fill=correct))+
   ylab("Percentage of coughs")+
   xlab("Time elapsed since last answer was said (seconds)")+
   scale_fill_manual(values=c("black", "red"))
-ggsave(file='histogram-distance-coughs-to-answers.png', 
+ggsave(file='figures/histogram-distance-coughs-to-answers.png', 
        width=8, height=4,
        histogram.plot)
 
