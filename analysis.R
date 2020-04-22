@@ -110,14 +110,17 @@ minpositive = function(x) {
 }
 
 
-# Calculate distances for correct answers
+# Calculate distances for correct answers (subsample to 50 answers)
+fifty.correct.answers <- sample(questions.answers$time.minutes[which(questions.answers$correct=="Correct")], 50)
 distances.correct.answers <- data.frame(time=sapply(coughs$time.minutes[which(coughs$time.minutes>min(questions.answers$time.minutes))], 
-                                                    function(x) minpositive(x- questions.answers$time.minutes[which(questions.answers$correct=="Correct")])*60))
+                                                    function(x) minpositive(x- fifty.answers)*60))
 distances.correct.answers$correct <- "Correct"
 
 # Calculate distances for incorrect answers
+fifty.incorrect.answers <- sample(questions.answers$time.minutes[which(questions.answers$correct=="Incorrect")], 50)
+
 distances.incorrect.answers <- data.frame(time=sapply(coughs$time.minutes[which(coughs$time.minutes>min(questions.answers$time.minutes))], 
-                                                      function(x) minpositive(x- questions.answers$time.minutes[which(questions.answers$correct=="Incorrect")])*60))
+                                                      function(x) minpositive(x- fifty.incorrect.answers)*60))
 distances.incorrect.answers$correct <- "Incorrect"
 
 # Combine dataset and plot
@@ -140,10 +143,10 @@ ggsave(file='figures/histogram-distance-coughs-to-answers.png',
 random.proportion.less.five <- c()
 for (i in 1:1000){
   print(i)
-  random.moments <- runif(length(questions.answers$time.minutes[which(questions.answers$correct=="Incorrect")]), 
+  random.answers <- runif(50, 
                           min=min(questions.answers$time.minutes[which(questions.answers$correct=="Incorrect")]), max = max(questions.answers$time.minutes[which(questions.answers$correct=="Incorrect")]))
   distances.random <- data.frame(time=sapply(coughs$time.minutes[which(coughs$time.minutes>min(questions.answers$time.minutes))], 
-                                             function(x) minpositive(x-random.moments))*60)
+                                             function(x) minpositive(x-random.answers))*60)
   distances.random <- distances.random$time[which(!is.na(distances.random$time))] 
   random.proportion.less.five <-c(random.proportion.less.five, length(distances.random[which(distances.random<5)])/length(distances.random) * 100)
 }
